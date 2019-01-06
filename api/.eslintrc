@@ -1,0 +1,18 @@
+{
+	"extends": "eslint:recommended",
+	"rules": {
+		// enable additional rules
+		"indent": ["error", "tab"],
+		"linebreak-style": ["error", "unix"],
+		"semi": ["error", "never"],
+		"quotes": ["error", "single"],
+		"jsx-quotes": ["error", "prefer-double"],
+
+		// override default options for rules from base configurations
+		"comma-dangle": ["error", "always"],
+		"no-cond-assign": ["error", "always"],
+
+		// disable rules from base configurations
+		"no-console": "off"
+	}
+}

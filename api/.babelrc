@@ -1,0 +1,21 @@
+{
+	"presets": ["react", "env"],
+	"plugins": [
+		"react-hot-loader/babel",
+		"transform-flow-strip-types",
+		"transform-function-bind",
+		"transform-class-properties",
+		"transform-decorators",
+		"transform-object-rest-spread",
+		["lodash", { "id": ["lodash"] }],
+		["transform-runtime", {
+	      "polyfill": false,
+	      "regenerator": true
+	    }]
+	],
+	"env": {
+	 "test": {
+		 "presets": [["env"], "react"]
+	 }
+ }
+}

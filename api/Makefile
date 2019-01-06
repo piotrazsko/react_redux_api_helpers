@@ -1,0 +1,2 @@
+default:
+	yarn run release
