@@ -1,5 +1,5 @@
 {
-	"name": "eco-api",
+	"name": "api_helpers",
 	"description": "Collection of actions, reducers and helpers for work with API",
 	"version": "1.0.4",
 	"main": "dist/index.js",
@@ -13,7 +13,6 @@
 		"flow": "flow",
 		"test": "jest"
 	},
-	"license": "ISC",
 	"dependencies": {
 		"axios": "^0.16.2",
 		"babel-plugin-syntax-class-properties": "^6.13.0",
