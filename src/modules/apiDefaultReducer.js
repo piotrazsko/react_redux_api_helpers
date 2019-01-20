@@ -7,12 +7,11 @@
  * @constructor
  */
 
-import { obj } from '../helpers'
-
 const initialState = {}
 
-const setNewState = obj.setIn
-const mergeState = obj.mergeIn
+const setNewState = function(state, path, object) {
+	state[path] = object
+}
 
 function apiReducers(state = initialState, action) {
 	const isRequest = /^.*_REQUEST$/.test(action.type)

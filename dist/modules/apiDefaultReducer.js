@@ -3,20 +3,20 @@
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
+/**
+ * ApiReducers using for catch  actions with prefixes _FAILED and _SUCCESS and save result redux-store
+ * if you use custom reducer, both will be used
+ *
+ * @param       {[type]} [state=initialState]
+ * @param       {[type]} action
+ * @constructor
+ */
 
-var _helpers = require('../helpers');
+var initialState = {};
 
-var initialState = {}; /**
-                        * ApiReducers using for catch  actions with prefixes _FAILED and _SUCCESS and save result redux-store
-                        * if you use custom reducer, both will be used
-                        *
-                        * @param       {[type]} [state=initialState]
-                        * @param       {[type]} action
-                        * @constructor
-                        */
-
-var setNewState = _helpers.obj.setIn;
-var mergeState = _helpers.obj.mergeIn;
+var setNewState = function setNewState(state, path, object) {
+	state[path] = object;
+};
 
 function apiReducers() {
 	var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
@@ -50,8 +50,6 @@ var _temp = function () {
 	__REACT_HOT_LOADER__.register(initialState, 'initialState', 'src/modules/apiDefaultReducer.js');
 
 	__REACT_HOT_LOADER__.register(setNewState, 'setNewState', 'src/modules/apiDefaultReducer.js');
-
-	__REACT_HOT_LOADER__.register(mergeState, 'mergeState', 'src/modules/apiDefaultReducer.js');
 
 	__REACT_HOT_LOADER__.register(apiReducers, 'apiReducers', 'src/modules/apiDefaultReducer.js');
 
