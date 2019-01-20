@@ -13,8 +13,6 @@ exports.default = apiWatchRequest;
 
 var _effects = require('redux-saga/effects');
 
-var _api = require('../configs/api.js');
-
 var _axios = require('../configs/axios');
 
 var _axios2 = _interopRequireDefault(_axios);
@@ -44,28 +42,26 @@ function callApi(action, apiMethods, authTokenSelector) {
 					apiRequest = apiMethods[action.type];
 
 					if (!(typeof apiRequest === 'function')) {
-						_context.next = 26;
+						_context.next = 25;
 						break;
 					}
 
 					data = apiRequest(action.payload);
 					// use for short form of url
 
-					data.url = (0, _api.getApiUrl)(data.url);
-
-					_context.prev = 4;
-					_context.next = 7;
+					_context.prev = 3;
+					_context.next = 6;
 					return (0, _effects.select)(authTokenSelector);
 
-				case 7:
+				case 6:
 					token = _context.sent;
-					_context.next = 10;
+					_context.next = 9;
 					return (0, _effects.call)(_axios2.default, {
 						data: data,
 						token: token
 					});
 
-				case 10:
+				case 9:
 					response = _context.sent;
 					newType = action.type.replace('_REQUEST', '_SUCCESS');
 
@@ -75,20 +71,20 @@ function callApi(action, apiMethods, authTokenSelector) {
 					if (typeof action.responseDataPrepare === 'function') {
 						response = action.responseDataPrepare(response);
 					}
-					_context.next = 16;
+					_context.next = 15;
 					return (0, _effects.put)({
 						response: response,
 						type: newType,
 						payload: action.payload
 					});
 
-				case 16:
-					_context.next = 24;
+				case 15:
+					_context.next = 23;
 					break;
 
-				case 18:
-					_context.prev = 18;
-					_context.t0 = _context['catch'](4);
+				case 17:
+					_context.prev = 17;
+					_context.t0 = _context['catch'](3);
 					errorModel = {
 						type: action.type.replace('_REQUEST', '_FAILED'),
 						payload: action.payload,
@@ -101,22 +97,22 @@ function callApi(action, apiMethods, authTokenSelector) {
 						action.onFailure(_context.t0);
 					}
 
-					_context.next = 24;
+					_context.next = 23;
 					return (0, _effects.put)(errorModel);
 
-				case 24:
-					_context.next = 27;
+				case 23:
+					_context.next = 26;
 					break;
 
-				case 26:
+				case 25:
 					throw new Error('Api method: [' + action.type + ']() isn\'t defined. Please, create it! Or use another name of action!');
 
-				case 27:
+				case 26:
 				case 'end':
 					return _context.stop();
 			}
 		}
-	}, _marked, this, [[4, 18]]);
+	}, _marked, this, [[3, 17]]);
 }
 
 /**
