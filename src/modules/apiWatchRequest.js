@@ -12,19 +12,16 @@
  */
 
 import { call, put, select, takeEvery } from 'redux-saga/effects'
-import apiService from '../configs/axios'
+import apiServiceDefault from '../configs/axios'
 
-export function* callApi(action, apiMethods, authTokenSelector) {
+export function* callApi(action, apiMethods, apiService = apiServiceDefault) {
 	const apiRequest = apiMethods[action.type]
 	if (typeof apiRequest === 'function') {
 		const data = apiRequest(action.payload)
 		// use for short form of url
 		try {
-			// TEMP:  may be structure of token will be changed
-			const token = yield select(authTokenSelector)
 			let response = yield call(apiService, {
 				data,
-				token,
 			})
 
 			const newType = action.type.replace('_REQUEST', '_SUCCESS')

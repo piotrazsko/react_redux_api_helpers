@@ -33,8 +33,9 @@ var _marked = /*#__PURE__*/_regenerator2.default.mark(callApi),
                                                                           * @type { Generator}
                                                                           */
 
-function callApi(action, apiMethods, authTokenSelector) {
-	var apiRequest, data, token, response, newType, errorModel;
+function callApi(action, apiMethods) {
+	var apiService = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : _axios2.default;
+	var apiRequest, data, response, newType, errorModel;
 	return _regenerator2.default.wrap(function callApi$(_context) {
 		while (1) {
 			switch (_context.prev = _context.next) {
@@ -42,7 +43,7 @@ function callApi(action, apiMethods, authTokenSelector) {
 					apiRequest = apiMethods[action.type];
 
 					if (!(typeof apiRequest === 'function')) {
-						_context.next = 25;
+						_context.next = 22;
 						break;
 					}
 
@@ -51,17 +52,11 @@ function callApi(action, apiMethods, authTokenSelector) {
 
 					_context.prev = 3;
 					_context.next = 6;
-					return (0, _effects.select)(authTokenSelector);
-
-				case 6:
-					token = _context.sent;
-					_context.next = 9;
-					return (0, _effects.call)(_axios2.default, {
-						data: data,
-						token: token
+					return (0, _effects.call)(apiService, {
+						data: data
 					});
 
-				case 9:
+				case 6:
 					response = _context.sent;
 					newType = action.type.replace('_REQUEST', '_SUCCESS');
 
@@ -71,19 +66,19 @@ function callApi(action, apiMethods, authTokenSelector) {
 					if (typeof action.responseDataPrepare === 'function') {
 						response = action.responseDataPrepare(response);
 					}
-					_context.next = 15;
+					_context.next = 12;
 					return (0, _effects.put)({
 						response: response,
 						type: newType,
 						payload: action.payload
 					});
 
-				case 15:
-					_context.next = 23;
+				case 12:
+					_context.next = 20;
 					break;
 
-				case 17:
-					_context.prev = 17;
+				case 14:
+					_context.prev = 14;
 					_context.t0 = _context['catch'](3);
 					errorModel = {
 						type: action.type.replace('_REQUEST', '_FAILED'),
@@ -97,22 +92,22 @@ function callApi(action, apiMethods, authTokenSelector) {
 						action.onFailure(_context.t0);
 					}
 
-					_context.next = 23;
+					_context.next = 20;
 					return (0, _effects.put)(errorModel);
 
-				case 23:
-					_context.next = 26;
+				case 20:
+					_context.next = 23;
 					break;
 
-				case 25:
+				case 22:
 					throw new Error('Api method: [' + action.type + ']() isn\'t defined. Please, create it! Or use another name of action!');
 
-				case 26:
+				case 23:
 				case 'end':
 					return _context.stop();
 			}
 		}
-	}, _marked, this, [[3, 17]]);
+	}, _marked, this, [[3, 14]]);
 }
 
 /**
