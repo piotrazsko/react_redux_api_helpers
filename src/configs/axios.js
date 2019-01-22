@@ -12,7 +12,7 @@ const instance = axios.create({
 export default params => {
 	const { data, token } = params
 	// TEMP:  may be structure of token will be changed
-	return instance(_.set(data, 'headers.Authorization', `${token}`))
+	return instance({ ...data })
 		.then(response => response)
 		.catch(error => {
 			const { statusText, status } = error.response || {}

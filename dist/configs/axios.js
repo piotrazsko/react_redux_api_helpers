@@ -4,9 +4,9 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
-var _set2 = require('lodash/set');
+var _extends2 = require('babel-runtime/helpers/extends');
 
-var _set3 = _interopRequireDefault(_set2);
+var _extends3 = _interopRequireDefault(_extends2);
 
 var _axios = require('axios');
 
@@ -27,7 +27,7 @@ var _default = function _default(params) {
 	    token = params.token;
 	// TEMP:  may be structure of token will be changed
 
-	return instance((0, _set3.default)(data, 'headers.Authorization', '' + token)).then(function (response) {
+	return instance((0, _extends3.default)({}, data)).then(function (response) {
 		return response;
 	}).catch(function (error) {
 		var _ref = error.response || {},
