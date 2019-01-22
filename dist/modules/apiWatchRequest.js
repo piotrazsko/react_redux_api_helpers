@@ -33,13 +33,15 @@ var _marked = /*#__PURE__*/_regenerator2.default.mark(callApi),
                                                                           * @type { Generator}
                                                                           */
 
-function callApi(action, apiMethods, options) {
-	var apiService, additiveCallback, apiRequest, data, response, newType, errorModel;
+function callApi(action, apiMethods) {
+	var apiService = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : _axios2.default;
+	var options = arguments[3];
+	var additiveCallback, apiRequest, data, response, newType, errorModel;
 	return _regenerator2.default.wrap(function callApi$(_context) {
 		while (1) {
 			switch (_context.prev = _context.next) {
 				case 0:
-					apiService = options.apiService, additiveCallback = options.additiveCallback;
+					additiveCallback = options.additiveCallback;
 					apiRequest = apiMethods[action.type];
 
 					if (!(typeof apiRequest === 'function')) {

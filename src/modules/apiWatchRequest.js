@@ -17,12 +17,12 @@ import apiServiceDefault from '../configs/axios'
 export function* callApi(
 	action,
 	apiMethods,
+	apiService = apiServiceDefault,
 	options: {
 		additiveCallback: null,
-		apiService: apiServiceDefault,
 	}
 ) {
-	const { apiService, additiveCallback } = options
+	const { additiveCallback } = options
 
 	const apiRequest = apiMethods[action.type]
 	if (typeof apiRequest === 'function') {
