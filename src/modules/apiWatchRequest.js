@@ -14,15 +14,13 @@
 import { call, put, select, takeEvery } from 'redux-saga/effects'
 import apiServiceDefault from '../configs/axios'
 
-export function* callApi(
-	action,
-	apiMethods,
-	apiService = apiServiceDefault,
-	options: {
+export function* callApi(action, apiMethods, options) {
+	const defaultOptions = {
+		apiService: apiServiceDefault,
 		additiveCallback: null,
 	}
-) {
-	const { additiveCallback } = options
+	options = { ...defaultOptions, ...options }
+	const { additiveCallback, apiService } = options
 
 	const apiRequest = apiMethods[action.type]
 	if (typeof apiRequest === 'function') {

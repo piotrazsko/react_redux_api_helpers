@@ -8,6 +8,10 @@ var _regenerator = require('babel-runtime/regenerator');
 
 var _regenerator2 = _interopRequireDefault(_regenerator);
 
+var _extends2 = require('babel-runtime/helpers/extends');
+
+var _extends3 = _interopRequireDefault(_extends2);
+
 exports.callApi = callApi;
 exports.default = apiWatchRequest;
 
@@ -33,43 +37,48 @@ var _marked = /*#__PURE__*/_regenerator2.default.mark(callApi),
                                                                           * @type { Generator}
                                                                           */
 
-function callApi(action, apiMethods) {
-	var apiService = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : _axios2.default;
-	var options = arguments[3];
-	var additiveCallback, apiRequest, data, response, newType, errorModel;
+function callApi(action, apiMethods, options) {
+	var defaultOptions, _options, additiveCallback, apiService, apiRequest, data, response, newType, errorModel;
+
 	return _regenerator2.default.wrap(function callApi$(_context) {
 		while (1) {
 			switch (_context.prev = _context.next) {
 				case 0:
-					additiveCallback = options.additiveCallback;
+					defaultOptions = {
+						apiService: _axios2.default,
+						additiveCallback: null
+					};
+
+					options = (0, _extends3.default)({}, defaultOptions, options);
+					_options = options, additiveCallback = _options.additiveCallback, apiService = _options.apiService;
 					apiRequest = apiMethods[action.type];
 
 					if (!(typeof apiRequest === 'function')) {
-						_context.next = 27;
+						_context.next = 29;
 						break;
 					}
 
 					data = apiRequest(action.payload);
 
 					if (!(typeof additiveCallback === 'function')) {
-						_context.next = 8;
+						_context.next = 10;
 						break;
 					}
 
-					_context.next = 7;
+					_context.next = 9;
 					return additiveCallback(data);
 
-				case 7:
+				case 9:
 					data = _context.sent;
 
-				case 8:
-					_context.prev = 8;
-					_context.next = 11;
+				case 10:
+					_context.prev = 10;
+					_context.next = 13;
 					return (0, _effects.call)(apiService, {
 						data: data
 					});
 
-				case 11:
+				case 13:
 					response = _context.sent;
 					newType = action.type.replace('_REQUEST', '_SUCCESS');
 
@@ -79,20 +88,20 @@ function callApi(action, apiMethods) {
 					if (typeof action.responseDataPrepare === 'function') {
 						response = action.responseDataPrepare(response);
 					}
-					_context.next = 17;
+					_context.next = 19;
 					return (0, _effects.put)({
 						response: response,
 						type: newType,
 						payload: action.payload
 					});
 
-				case 17:
-					_context.next = 25;
+				case 19:
+					_context.next = 27;
 					break;
 
-				case 19:
-					_context.prev = 19;
-					_context.t0 = _context['catch'](8);
+				case 21:
+					_context.prev = 21;
+					_context.t0 = _context['catch'](10);
 					errorModel = {
 						type: action.type.replace('_REQUEST', '_FAILED'),
 						payload: action.payload,
@@ -105,22 +114,22 @@ function callApi(action, apiMethods) {
 						action.onFailure(_context.t0);
 					}
 
-					_context.next = 25;
+					_context.next = 27;
 					return (0, _effects.put)(errorModel);
 
-				case 25:
-					_context.next = 28;
+				case 27:
+					_context.next = 30;
 					break;
 
-				case 27:
+				case 29:
 					throw new Error('Api method: [' + action.type + ']() isn\'t defined. Please, create it! Or use another name of action!');
 
-				case 28:
+				case 30:
 				case 'end':
 					return _context.stop();
 			}
 		}
-	}, _marked, this, [[8, 19]]);
+	}, _marked, this, [[10, 21]]);
 }
 
 /**
