@@ -33,35 +33,41 @@ var _marked = /*#__PURE__*/_regenerator2.default.mark(callApi),
                                                                           * @type { Generator}
                                                                           */
 
-function callApi(action, apiMethods) {
-	var additiveCallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function (data) {
-		return data;
-	};
-	var apiService = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : _axios2.default;
-	var apiRequest, data, response, newType, errorModel;
+function callApi(action, apiMethods, options) {
+	var apiService, additiveCallback, apiRequest, data, response, newType, errorModel;
 	return _regenerator2.default.wrap(function callApi$(_context) {
 		while (1) {
 			switch (_context.prev = _context.next) {
 				case 0:
+					apiService = options.apiService, additiveCallback = options.additiveCallback;
 					apiRequest = apiMethods[action.type];
 
 					if (!(typeof apiRequest === 'function')) {
-						_context.next = 23;
+						_context.next = 27;
 						break;
 					}
 
 					data = apiRequest(action.payload);
 
-					if (typeof additiveCallback === 'function') {
-						data = additiveCallback(data);
+					if (!(typeof additiveCallback === 'function')) {
+						_context.next = 8;
+						break;
 					}
-					_context.prev = 4;
+
 					_context.next = 7;
+					return additiveCallback(data);
+
+				case 7:
+					data = _context.sent;
+
+				case 8:
+					_context.prev = 8;
+					_context.next = 11;
 					return (0, _effects.call)(apiService, {
 						data: data
 					});
 
-				case 7:
+				case 11:
 					response = _context.sent;
 					newType = action.type.replace('_REQUEST', '_SUCCESS');
 
@@ -71,20 +77,20 @@ function callApi(action, apiMethods) {
 					if (typeof action.responseDataPrepare === 'function') {
 						response = action.responseDataPrepare(response);
 					}
-					_context.next = 13;
+					_context.next = 17;
 					return (0, _effects.put)({
 						response: response,
 						type: newType,
 						payload: action.payload
 					});
 
-				case 13:
-					_context.next = 21;
+				case 17:
+					_context.next = 25;
 					break;
 
-				case 15:
-					_context.prev = 15;
-					_context.t0 = _context['catch'](4);
+				case 19:
+					_context.prev = 19;
+					_context.t0 = _context['catch'](8);
 					errorModel = {
 						type: action.type.replace('_REQUEST', '_FAILED'),
 						payload: action.payload,
@@ -97,22 +103,22 @@ function callApi(action, apiMethods) {
 						action.onFailure(_context.t0);
 					}
 
-					_context.next = 21;
+					_context.next = 25;
 					return (0, _effects.put)(errorModel);
 
-				case 21:
-					_context.next = 24;
+				case 25:
+					_context.next = 28;
 					break;
 
-				case 23:
+				case 27:
 					throw new Error('Api method: [' + action.type + ']() isn\'t defined. Please, create it! Or use another name of action!');
 
-				case 24:
+				case 28:
 				case 'end':
 					return _context.stop();
 			}
 		}
-	}, _marked, this, [[4, 15]]);
+	}, _marked, this, [[8, 19]]);
 }
 
 /**

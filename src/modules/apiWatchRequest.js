@@ -17,14 +17,18 @@ import apiServiceDefault from '../configs/axios'
 export function* callApi(
 	action,
 	apiMethods,
-	additiveCallback = data => data,
-	apiService = apiServiceDefault
+	options: {
+		additiveCallback: null,
+		apiService: apiServiceDefault,
+	}
 ) {
+	const { apiService, additiveCallback } = options
+
 	const apiRequest = apiMethods[action.type]
 	if (typeof apiRequest === 'function') {
 		let data = apiRequest(action.payload)
 		if (typeof additiveCallback === 'function') {
-			data = additiveCallback(data)
+			data = yield additiveCallback(data)
 		}
 		try {
 			let response = yield call(apiService, {
