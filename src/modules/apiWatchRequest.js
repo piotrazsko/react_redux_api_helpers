@@ -14,11 +14,18 @@
 import { call, put, select, takeEvery } from 'redux-saga/effects'
 import apiServiceDefault from '../configs/axios'
 
-export function* callApi(action, apiMethods, apiService = apiServiceDefault) {
+export function* callApi(
+	action,
+	apiMethods,
+	additiveCallback = data => data,
+	apiService = apiServiceDefault
+) {
 	const apiRequest = apiMethods[action.type]
 	if (typeof apiRequest === 'function') {
-		const data = apiRequest(action.payload)
-		// use for short form of url
+		let data = apiRequest(action.payload)
+		if (typeof additiveCallback === 'function') {
+			data = additiveCallback(data)
+		}
 		try {
 			let response = yield call(apiService, {
 				data,

@@ -34,7 +34,10 @@ var _marked = /*#__PURE__*/_regenerator2.default.mark(callApi),
                                                                           */
 
 function callApi(action, apiMethods) {
-	var apiService = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : _axios2.default;
+	var additiveCallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function (data) {
+		return data;
+	};
+	var apiService = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : _axios2.default;
 	var apiRequest, data, response, newType, errorModel;
 	return _regenerator2.default.wrap(function callApi$(_context) {
 		while (1) {
@@ -43,20 +46,22 @@ function callApi(action, apiMethods) {
 					apiRequest = apiMethods[action.type];
 
 					if (!(typeof apiRequest === 'function')) {
-						_context.next = 22;
+						_context.next = 23;
 						break;
 					}
 
 					data = apiRequest(action.payload);
-					// use for short form of url
 
-					_context.prev = 3;
-					_context.next = 6;
+					if (typeof additiveCallback === 'function') {
+						data = additiveCallback(data);
+					}
+					_context.prev = 4;
+					_context.next = 7;
 					return (0, _effects.call)(apiService, {
 						data: data
 					});
 
-				case 6:
+				case 7:
 					response = _context.sent;
 					newType = action.type.replace('_REQUEST', '_SUCCESS');
 
@@ -66,20 +71,20 @@ function callApi(action, apiMethods) {
 					if (typeof action.responseDataPrepare === 'function') {
 						response = action.responseDataPrepare(response);
 					}
-					_context.next = 12;
+					_context.next = 13;
 					return (0, _effects.put)({
 						response: response,
 						type: newType,
 						payload: action.payload
 					});
 
-				case 12:
-					_context.next = 20;
+				case 13:
+					_context.next = 21;
 					break;
 
-				case 14:
-					_context.prev = 14;
-					_context.t0 = _context['catch'](3);
+				case 15:
+					_context.prev = 15;
+					_context.t0 = _context['catch'](4);
 					errorModel = {
 						type: action.type.replace('_REQUEST', '_FAILED'),
 						payload: action.payload,
@@ -92,22 +97,22 @@ function callApi(action, apiMethods) {
 						action.onFailure(_context.t0);
 					}
 
-					_context.next = 20;
+					_context.next = 21;
 					return (0, _effects.put)(errorModel);
 
-				case 20:
-					_context.next = 23;
+				case 21:
+					_context.next = 24;
 					break;
 
-				case 22:
+				case 23:
 					throw new Error('Api method: [' + action.type + ']() isn\'t defined. Please, create it! Or use another name of action!');
 
-				case 23:
+				case 24:
 				case 'end':
 					return _context.stop();
 			}
 		}
-	}, _marked, this, [[3, 14]]);
+	}, _marked, this, [[4, 15]]);
 }
 
 /**
