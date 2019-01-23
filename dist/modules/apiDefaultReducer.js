@@ -14,8 +14,13 @@ Object.defineProperty(exports, "__esModule", {
 
 var initialState = {};
 
-var setNewState = function setNewState(state, path, object) {
+var setNewState = function setNewState() {
+	var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
+	var path = arguments[1];
+	var object = arguments[2];
+
 	state[path] = object;
+	return state;
 };
 
 function apiReducers() {

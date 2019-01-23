@@ -9,8 +9,9 @@
 
 const initialState = {}
 
-const setNewState = function(state, path, object) {
+const setNewState = function(state = initialState, path, object) {
 	state[path] = object
+	return state
 }
 
 function apiReducers(state = initialState, action) {
