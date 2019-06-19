@@ -6,19 +6,13 @@ Object.defineProperty(exports, "__esModule", {
 exports.apiSelector = apiSelector;
 /**
  * [apiSelector description]
- * @param  {ctring} actionName  - constatn  with name of request action
- * @return {fucnrion}            return selector for getting result of request or empty object
- * EXAMPLE: export const  apiSelector  = helpers.apiSelector(GET_DEALS_REQUEST)
- *  */
-/**
- * [apiSelector description]
- * @param  {[string]} actionName - rgument for get data of from state
+ * @param  {string} actionName - rgument for get data of from state
  * @param  {object} options    - settings
  * 	  @param [any] filter - use for get only sucess responce - 'success', if false - 'all'
  * 		@param [boolean] onlyResultObject - use for get only result data
  * 		@param [any] initialData - set default responce( if date not founded)
  * 	 	@param [function]  resultPrepareCalback  - prepare data before return
- * @return {- result}            []
+ * @return {result}
  */
 
 function apiSelector(actionName, options) {
