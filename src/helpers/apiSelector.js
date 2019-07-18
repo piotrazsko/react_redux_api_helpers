@@ -10,62 +10,61 @@
  */
 
 export function apiSelector(actionName, options) {
-	let defaultOptions = {
-		onlyResultObject: true,
-		filter: false,
-		resultPrepareCalback: function(res) {
-			return res
-		},
-		initialData: [],
-	}
-	options = Object.assign({}, defaultOptions, options)
+    let defaultOptions = {
+        onlyResultObject: true,
+        filter: false,
+        resultPrepareCalback: function(res) {
+            return res;
+        },
+        initialData: [],
+    };
+    options = Object.assign({}, defaultOptions, options);
+    if (/^.*_REQUEST$/.test(actionName)) {
+        var partActionName = actionName.split('_REQUEST')[0];
 
-	if (/^.*_REQUEST$/.test(actionName)) {
-		var partActionName = actionName.split('_REQUEST')[0]
+        return function(state) {
+            var result = {
+                status: false,
+            };
+            var failedName = partActionName + '_FAILED';
+            var successName = partActionName + '_SUCCESS';
+            var timeStamp = 0;
 
-		return function(state) {
-			var result = {
-				status: false,
-			}
-			var failedName = partActionName + '_FAILED'
-			var successName = partActionName + '_SUCCESS'
-			var timeStamp = 0
+            if (failedName in state.api) {
+                timeStamp = state.api[failedName].timestamp;
+                result = Object.assign(result, state.api[failedName]);
+                result.status = 'failed';
+            }
+            if (successName in state.api && timeStamp < state.api[successName].timestamp) {
+                result = Object.assign(result, state.api[successName]);
+                result.status = 'success';
+            }
+            let tempRes = result;
 
-			if (failedName in state.api) {
-				timeStamp = state.api[failedName].timestamp
-				result = Object.assign(result, state.api[failedName])
-				result.status = 'failed'
-			}
-			if (successName in state.api && timeStamp < state.api[successName].timestamp) {
-				result = Object.assign(result, state.api[successName])
-				result.status = 'success'
-			}
-			let tempRes = result
-
-			if (options.onlyResultObject) {
-				if (typeof result.responseData !== 'undefined') {
-					tempRes = result.responseData
-				} else {
-					tempRes = options.initialData
-				}
-			}
-			switch (true) {
-				case options.filter === result.status:
-					result = tempRes
-					break
-				case options.filter === false:
-					result = tempRes
-					break
-				default:
-					result = options.initialData
-			}
-			if (typeof options.resultPrepareCalback === 'function') {
-				return options.resultPrepareCalback(result)
-			} else {
-				return result
-			}
-		}
-	} else {
-		throw new Error('Action Name incorrect! Check:' + actionName)
-	}
+            if (options.onlyResultObject) {
+                if (typeof result.responseData !== 'undefined') {
+                    tempRes = result.responseData;
+                } else {
+                    tempRes = options.initialData;
+                }
+            }
+            switch (true) {
+                case options.filter === result.status:
+                    result = tempRes;
+                    break;
+                case options.filter === false:
+                    result = tempRes;
+                    break;
+                default:
+                    result = options.initialData;
+            }
+            if (typeof options.resultPrepareCalback === 'function') {
+                return options.resultPrepareCalback(result);
+            } else {
+                return result;
+            }
+        };
+    } else {
+        throw new Error('Action Name incorrect! Check:' + actionName);
+    }
 }

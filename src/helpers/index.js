@@ -1,2 +1,2 @@
-export { actionCreator } from './actionCreator'
-export { apiSelector } from './apiSelector'
+export { actionCreator, responseActionsTypes } from './actionCreator';
+export { apiSelector } from './apiSelector';

@@ -3,7 +3,22 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.apiDefaultReducer = exports.apiWatchRequest = undefined;
+exports.apiRoutes = exports.ApiRoutes = exports.apiDefaultReducer = exports.apiWatchRequest = undefined;
+
+var _apiRoutes = require('./apiRoutes');
+
+Object.defineProperty(exports, 'ApiRoutes', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_apiRoutes).default;
+  }
+});
+Object.defineProperty(exports, 'apiRoutes', {
+  enumerable: true,
+  get: function get() {
+    return _apiRoutes.apiRoutes;
+  }
+});
 
 var _apiWatchRequest = require('./apiWatchRequest');
 

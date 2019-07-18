@@ -11,59 +11,68 @@
  * @type { Generator}
  */
 
-import { call, put, select, takeEvery } from 'redux-saga/effects'
-import apiServiceDefault from '../configs/axios'
+import ApiRoutes from './apiRoutes';
+import { call, put, takeEvery } from 'redux-saga/effects';
+import apiServiceDefault from '../axios/axios';
+import { responseActionsTypes } from '../helpers';
+const apiRoutes = new ApiRoutes();
 
 export function* callApi(action, apiMethods, options) {
-	const defaultOptions = {
-		apiService: apiServiceDefault,
-		additiveCallback: null,
-	}
-	options = { ...defaultOptions, ...options }
-	const { additiveCallback, apiService } = options
+    const defaultOptions = {
+        apiService: apiServiceDefault,
+        additiveCallback: null,
+        successCallback: null,
+        failedCallback: null,
+    };
+    options = { ...defaultOptions, ...options };
+    const { additiveCallback, apiService, successCallback, failedCallback } = options;
 
-	const apiRequest = apiMethods[action.type]
-	if (typeof apiRequest === 'function') {
-		let data = apiRequest(action.payload)
-		if (typeof additiveCallback === 'function') {
-			data = yield additiveCallback(data)
-		}
-		try {
-			let response = yield call(apiService, {
-				data,
-			})
-
-			const newType = action.type.replace('_REQUEST', '_SUCCESS')
-			if (typeof action.onSuccess === 'function') {
-				action.onSuccess(response)
-			}
-			if (typeof action.responseDataPrepare === 'function') {
-				response = action.responseDataPrepare(response)
-			}
-			yield put({
-				response,
-				type: newType,
-				payload: action.payload,
-			})
-		} catch (e) {
-			const errorModel = {
-				type: action.type.replace('_REQUEST', '_FAILED'),
-				payload: action.payload,
-				message: e.statusText,
-				status: e.status,
-				response: e.response,
-			}
-			if (typeof action.onFailure === 'function') {
-				action.onFailure(e)
-			}
-
-			yield put(errorModel)
-		}
-	} else {
-		throw new Error(
-			`Api method: [${action.type}]() isn't defined. Please, create it! Or use another name of action!`
-		)
-	}
+    const apiRequest = apiMethods[action.type];
+    if (typeof apiRequest === 'function') {
+        let data = apiRequest(action.payload);
+        if (typeof additiveCallback === 'function') {
+            data = yield additiveCallback(data);
+        }
+        let actionsTypes = responseActionsTypes(action.type);
+        try {
+            let response = yield call(apiService, {
+                data,
+            });
+            if (typeof action.onSuccess === 'function') {
+                action.onSuccess(response);
+            }
+            if (typeof successCallback === 'function') {
+                yield call(successCallback, response);
+            }
+            if (typeof action.responseDataPrepare === 'function') {
+                response = action.responseDataPrepare(response);
+            }
+            yield put({
+                response,
+                type: actionsTypes.successAction,
+                payload: action.payload,
+            });
+        } catch (e) {
+            const errorModel = {
+                type: actionsTypes.failedAction,
+                payload: action.payload,
+                message: e.statusText,
+                status: e.status,
+                response: e.response,
+            };
+            if (typeof action.onFailure === 'function') {
+                action.onFailure(e);
+            }
+            if (typeof failedCallback === 'function') {
+                yield call(failedCallback, errorModel);
+            }
+            yield put(errorModel);
+        }
+    } else {
+        throw new Error(
+            `Api method: [${action.type}]() isn't defined. Please, create it! Or use another name of action!`
+        );
+    }
 }
 
 /**
@@ -88,9 +97,9 @@ export function* callApi(action, apiMethods, options) {
   * @return {Generator}
  */
 
-export default function* apiWatchRequest(apiMethods, authTokenSelector) {
-	yield takeEvery(
-		action => /^.*_REQUEST$/.test(action.type),
-		actions => callApi(actions, apiMethods, authTokenSelector)
-	)
+export default function* apiWatchRequest(authTokenSelector) {
+    yield takeEvery(
+        action => /^.*_REQUEST$/.test(action.type),
+        actions => callApi(actions, apiRoutes.routes, authTokenSelector)
+    );
 }

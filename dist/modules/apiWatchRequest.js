@@ -1,7 +1,7 @@
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-	value: true
+    value: true
 });
 
 var _regenerator = require('babel-runtime/regenerator');
@@ -15,11 +15,17 @@ var _extends3 = _interopRequireDefault(_extends2);
 exports.callApi = callApi;
 exports.default = apiWatchRequest;
 
+var _apiRoutes = require('./apiRoutes');
+
+var _apiRoutes2 = _interopRequireDefault(_apiRoutes);
+
 var _effects = require('redux-saga/effects');
 
-var _axios = require('../configs/axios');
+var _axios = require('../axios/axios');
 
 var _axios2 = _interopRequireDefault(_axios);
+
+var _helpers = require('../helpers');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -37,99 +43,122 @@ var _marked = /*#__PURE__*/_regenerator2.default.mark(callApi),
                                                                           * @type { Generator}
                                                                           */
 
+var apiRoutes = new _apiRoutes2.default();
+
 function callApi(action, apiMethods, options) {
-	var defaultOptions, _options, additiveCallback, apiService, apiRequest, data, response, newType, errorModel;
+    var defaultOptions, _options, additiveCallback, apiService, successCallback, failedCallback, apiRequest, data, actionsTypes, response, errorModel;
 
-	return _regenerator2.default.wrap(function callApi$(_context) {
-		while (1) {
-			switch (_context.prev = _context.next) {
-				case 0:
-					defaultOptions = {
-						apiService: _axios2.default,
-						additiveCallback: null
-					};
+    return _regenerator2.default.wrap(function callApi$(_context) {
+        while (1) {
+            switch (_context.prev = _context.next) {
+                case 0:
+                    defaultOptions = {
+                        apiService: _axios2.default,
+                        additiveCallback: null,
+                        successCallback: null,
+                        failedCallback: null
+                    };
 
-					options = (0, _extends3.default)({}, defaultOptions, options);
-					_options = options, additiveCallback = _options.additiveCallback, apiService = _options.apiService;
-					apiRequest = apiMethods[action.type];
+                    options = (0, _extends3.default)({}, defaultOptions, options);
+                    _options = options, additiveCallback = _options.additiveCallback, apiService = _options.apiService, successCallback = _options.successCallback, failedCallback = _options.failedCallback;
+                    apiRequest = apiMethods[action.type];
 
-					if (!(typeof apiRequest === 'function')) {
-						_context.next = 29;
-						break;
-					}
+                    if (!(typeof apiRequest === 'function')) {
+                        _context.next = 35;
+                        break;
+                    }
 
-					data = apiRequest(action.payload);
+                    data = apiRequest(action.payload);
 
-					if (!(typeof additiveCallback === 'function')) {
-						_context.next = 10;
-						break;
-					}
+                    if (!(typeof additiveCallback === 'function')) {
+                        _context.next = 10;
+                        break;
+                    }
 
-					_context.next = 9;
-					return additiveCallback(data);
+                    _context.next = 9;
+                    return additiveCallback(data);
 
-				case 9:
-					data = _context.sent;
+                case 9:
+                    data = _context.sent;
 
-				case 10:
-					_context.prev = 10;
-					_context.next = 13;
-					return (0, _effects.call)(apiService, {
-						data: data
-					});
+                case 10:
+                    actionsTypes = (0, _helpers.responseActionsTypes)(action.type);
+                    _context.prev = 11;
+                    _context.next = 14;
+                    return (0, _effects.call)(apiService, {
+                        data: data
+                    });
 
-				case 13:
-					response = _context.sent;
-					newType = action.type.replace('_REQUEST', '_SUCCESS');
+                case 14:
+                    response = _context.sent;
 
-					if (typeof action.onSuccess === 'function') {
-						action.onSuccess(response);
-					}
-					if (typeof action.responseDataPrepare === 'function') {
-						response = action.responseDataPrepare(response);
-					}
-					_context.next = 19;
-					return (0, _effects.put)({
-						response: response,
-						type: newType,
-						payload: action.payload
-					});
+                    if (typeof action.onSuccess === 'function') {
+                        action.onSuccess(response);
+                    }
 
-				case 19:
-					_context.next = 27;
-					break;
+                    if (!(typeof successCallback === 'function')) {
+                        _context.next = 19;
+                        break;
+                    }
 
-				case 21:
-					_context.prev = 21;
-					_context.t0 = _context['catch'](10);
-					errorModel = {
-						type: action.type.replace('_REQUEST', '_FAILED'),
-						payload: action.payload,
-						message: _context.t0.statusText,
-						status: _context.t0.status,
-						response: _context.t0.response
-					};
+                    _context.next = 19;
+                    return (0, _effects.call)(successCallback, response);
 
-					if (typeof action.onFailure === 'function') {
-						action.onFailure(_context.t0);
-					}
+                case 19:
+                    if (typeof action.responseDataPrepare === 'function') {
+                        response = action.responseDataPrepare(response);
+                    }
+                    _context.next = 22;
+                    return (0, _effects.put)({
+                        response: response,
+                        type: actionsTypes.successAction,
+                        payload: action.payload
+                    });
 
-					_context.next = 27;
-					return (0, _effects.put)(errorModel);
+                case 22:
+                    _context.next = 33;
+                    break;
 
-				case 27:
-					_context.next = 30;
-					break;
+                case 24:
+                    _context.prev = 24;
+                    _context.t0 = _context['catch'](11);
+                    errorModel = {
+                        type: actionsTypes.failedAction,
+                        payload: action.payload,
+                        message: _context.t0.statusText,
+                        status: _context.t0.status,
+                        response: _context.t0.response
+                    };
 
-				case 29:
-					throw new Error('Api method: [' + action.type + ']() isn\'t defined. Please, create it! Or use another name of action!');
+                    if (typeof action.onFailure === 'function') {
+                        action.onFailure(_context.t0);
+                    }
 
-				case 30:
-				case 'end':
-					return _context.stop();
-			}
-		}
-	}, _marked, this, [[10, 21]]);
+                    if (!(typeof failedCallback === 'function')) {
+                        _context.next = 31;
+                        break;
+                    }
+
+                    _context.next = 31;
+                    return (0, _effects.call)(failedCallback, errorModel);
+
+                case 31:
+                    _context.next = 33;
+                    return (0, _effects.put)(errorModel);
+
+                case 33:
+                    _context.next = 36;
+                    break;
+
+                case 35:
+                    throw new Error('Api method: [' + action.type + ']() isn\'t defined. Please, create it! Or use another name of action!');
+
+                case 36:
+                case 'end':
+                    return _context.stop();
+            }
+        }
+    }, _marked, this, [[11, 24]]);
 }
 
 /**
@@ -154,36 +183,38 @@ function callApi(action, apiMethods, options) {
   * @return {Generator}
  */
 
-function apiWatchRequest(apiMethods, authTokenSelector) {
-	return _regenerator2.default.wrap(function apiWatchRequest$(_context2) {
-		while (1) {
-			switch (_context2.prev = _context2.next) {
-				case 0:
-					_context2.next = 2;
-					return (0, _effects.takeEvery)(function (action) {
-						return (/^.*_REQUEST$/.test(action.type)
-						);
-					}, function (actions) {
-						return callApi(actions, apiMethods, authTokenSelector);
-					});
+function apiWatchRequest(authTokenSelector) {
+    return _regenerator2.default.wrap(function apiWatchRequest$(_context2) {
+        while (1) {
+            switch (_context2.prev = _context2.next) {
+                case 0:
+                    _context2.next = 2;
+                    return (0, _effects.takeEvery)(function (action) {
+                        return (/^.*_REQUEST$/.test(action.type)
+                        );
+                    }, function (actions) {
+                        return callApi(actions, apiRoutes.routes, authTokenSelector);
+                    });
 
-				case 2:
-				case 'end':
-					return _context2.stop();
-			}
-		}
-	}, _marked2, this);
+                case 2:
+                case 'end':
+                    return _context2.stop();
+            }
+        }
+    }, _marked2, this);
 }
 ;
 
 var _temp = function () {
-	if (typeof __REACT_HOT_LOADER__ === 'undefined') {
-		return;
-	}
+    if (typeof __REACT_HOT_LOADER__ === 'undefined') {
+        return;
+    }
 
-	__REACT_HOT_LOADER__.register(callApi, 'callApi', 'src/modules/apiWatchRequest.js');
+    __REACT_HOT_LOADER__.register(apiRoutes, 'apiRoutes', 'src/modules/apiWatchRequest.js');
 
-	__REACT_HOT_LOADER__.register(apiWatchRequest, 'apiWatchRequest', 'src/modules/apiWatchRequest.js');
+    __REACT_HOT_LOADER__.register(callApi, 'callApi', 'src/modules/apiWatchRequest.js');
+
+    __REACT_HOT_LOADER__.register(apiWatchRequest, 'apiWatchRequest', 'src/modules/apiWatchRequest.js');
 }();
 
 ;

@@ -1,5 +1,5 @@
-import * as configs from './configs'
-import * as helpers from './helpers'
-import * as modules from './modules'
+import * as axios from './axios';
+import * as helpers from './helpers';
+import * as modules from './modules';
 
-export { configs, helpers, modules }
+export { axios, helpers, modules };

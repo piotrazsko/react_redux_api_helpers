@@ -3,11 +3,11 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.modules = exports.helpers = exports.configs = undefined;
+exports.modules = exports.helpers = exports.axios = undefined;
 
-var _configs = require('./configs');
+var _axios = require('./axios');
 
-var configs = _interopRequireWildcard(_configs);
+var axios = _interopRequireWildcard(_axios);
 
 var _helpers = require('./helpers');
 
@@ -19,7 +19,7 @@ var modules = _interopRequireWildcard(_modules);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-exports.configs = configs;
+exports.axios = axios;
 exports.helpers = helpers;
 exports.modules = modules;
 ;
