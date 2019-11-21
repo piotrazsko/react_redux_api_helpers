@@ -18,7 +18,7 @@ exports.apiSelector = apiSelector;
 function apiSelector(actionName, options) {
     var defaultOptions = {
         onlyResultObject: true,
-        filter: false,
+        filter: 'success',
         resultPrepareCalback: function resultPrepareCalback(res) {
             return res;
         },

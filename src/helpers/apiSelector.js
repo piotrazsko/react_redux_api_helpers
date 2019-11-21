@@ -12,7 +12,7 @@
 export function apiSelector(actionName, options) {
     let defaultOptions = {
         onlyResultObject: true,
-        filter: false,
+        filter: 'success',
         resultPrepareCalback: function(res) {
             return res;
         },
