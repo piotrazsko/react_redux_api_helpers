@@ -21,7 +21,7 @@
 		"babel-plugin-transform-imports": "^1.4.1",
 		"connected-react-router": "^5.0.1",
 		"jwt-decode": "^2.2.0",
-		"lodash": "^4.17.4",
+		"lodash": "^4.17.13",
 		"react-cookie": "^2.1.1",
 		"redux-actions": "^2.6.4",
 		"redux-pack": "^0.1.5",
