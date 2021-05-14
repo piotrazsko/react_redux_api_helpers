@@ -10,7 +10,10 @@ var _reduxActions = require('redux-actions');
 
 function actionCreator(actionType, reducersOptions) {
     var defaultOptions = {
-        responseDataPrepare: undefined
+        responseDataPrepare: undefined,
+        preventSuccess: false,
+        preventFailure: false,
+        postSaveToStoreCallback: false
     };
     reducersOptions = Object.assign({}, defaultOptions, reducersOptions);
     var actionCreator = (0, _reduxActions.createAction)(actionType);
@@ -19,6 +22,10 @@ function actionCreator(actionType, reducersOptions) {
         if (typeof res !== 'undefined' && typeof options !== 'undefined') {
             res.onFailure = options.onFailure;
             res.onSuccess = options.onSuccess;
+            res.key = options.key;
+            res.preventSuccess = options.preventSuccess;
+            res.preventFailure = options.preventFailure;
+            res.postSaveToStoreCallback = options.postSaveToStoreCallback;
         }
         res.responseDataPrepare = reducersOptions.responseDataPrepare;
         return res;

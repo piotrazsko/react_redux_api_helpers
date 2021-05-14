@@ -22,6 +22,7 @@ function apiSelector(actionName, options) {
         resultPrepareCalback: function resultPrepareCalback(res) {
             return res;
         },
+        key: undefined,
         initialData: []
     };
     options = Object.assign({}, defaultOptions, options);
@@ -32,8 +33,8 @@ function apiSelector(actionName, options) {
             var result = {
                 status: false
             };
-            var failedName = partActionName + '_FAILED';
-            var successName = partActionName + '_SUCCESS';
+            var failedName = partActionName + '_FAILED' + (options.key ? options.key : '');
+            var successName = partActionName + '_SUCCESS' + (options.key ? options.key : '');
             var timeStamp = 0;
 
             if (failedName in state.api) {

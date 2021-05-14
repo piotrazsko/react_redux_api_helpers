@@ -46,7 +46,7 @@ var _marked = /*#__PURE__*/_regenerator2.default.mark(callApi),
 var apiRoutes = new _apiRoutes2.default();
 
 function callApi(action, apiMethods, options) {
-    var defaultOptions, _options, additiveCallback, apiService, successCallback, failedCallback, apiRequest, data, actionsTypes, response, errorModel;
+    var defaultOptions, _options, additiveCallback, apiService, successCallback, failedCallback, stopRequest, preventSuccessAction, preventFailedAction, apiRequest, data, actionsTypes, response, errorModel;
 
     return _regenerator2.default.wrap(function callApi$(_context) {
         while (1) {
@@ -56,15 +56,32 @@ function callApi(action, apiMethods, options) {
                         apiService: _axios2.default,
                         additiveCallback: null,
                         successCallback: null,
-                        failedCallback: null
+                        failedCallback: null,
+                        stopRequest: function stopRequest() {
+                            // callback  used before request -  we can stop it
+                            return false;
+                        },
+                        preventSuccessAction: false,
+                        preventFailedAction: false
                     };
 
                     options = (0, _extends3.default)({}, defaultOptions, options);
-                    _options = options, additiveCallback = _options.additiveCallback, apiService = _options.apiService, successCallback = _options.successCallback, failedCallback = _options.failedCallback;
+                    /**
+                     * [additiveCallback used for prepare  request]
+                     * [stopRequest used for  stop responce if nesessary ]
+                     * [onSuccess used for  listening of result  - get from  action ]
+                     * [beforeRequestCallback used before  request- get from  action ]
+                     * [responseDataPrepare  used for prepare responce before save to store- get from  action ]
+                     * [preventSuccess  used for  flag for prevent save to store- get from  action ]
+                     * [preventSuccessAction  used for  flag for prevent save to store ]
+                     * [postSaveToStoreCallback  used after save to store- get from  action ]
+                     * @type {[type]}
+                     */
+                    _options = options, additiveCallback = _options.additiveCallback, apiService = _options.apiService, successCallback = _options.successCallback, failedCallback = _options.failedCallback, stopRequest = _options.stopRequest, preventSuccessAction = _options.preventSuccessAction, preventFailedAction = _options.preventFailedAction;
                     apiRequest = apiMethods[action.type];
 
                     if (!(typeof apiRequest === 'function')) {
-                        _context.next = 35;
+                        _context.next = 42;
                         break;
                     }
 
@@ -84,12 +101,21 @@ function callApi(action, apiMethods, options) {
                 case 10:
                     actionsTypes = (0, _helpers.responseActionsTypes)(action.type);
                     _context.prev = 11;
-                    _context.next = 14;
+
+                    if (stopRequest(data)) {
+                        _context.next = 28;
+                        break;
+                    }
+
+                    if (typeof action.beforeRequestCallback === 'function') {
+                        action.beforeRequestCallback(data);
+                    }
+                    _context.next = 16;
                     return (0, _effects.call)(apiService, {
                         data: data
                     });
 
-                case 14:
+                case 16:
                     response = _context.sent;
 
                     if (typeof action.onSuccess === 'function') {
@@ -97,30 +123,46 @@ function callApi(action, apiMethods, options) {
                     }
 
                     if (!(typeof successCallback === 'function')) {
-                        _context.next = 19;
+                        _context.next = 21;
                         break;
                     }
 
-                    _context.next = 19;
+                    _context.next = 21;
                     return (0, _effects.call)(successCallback, response);
 
-                case 19:
+                case 21:
                     if (typeof action.responseDataPrepare === 'function') {
                         response = action.responseDataPrepare(response);
                     }
-                    _context.next = 22;
+
+                    if (!(!preventSuccessAction && !action.preventSuccess)) {
+                        _context.next = 25;
+                        break;
+                    }
+
+                    _context.next = 25;
                     return (0, _effects.put)({
                         response: response,
                         type: actionsTypes.successAction,
-                        payload: action.payload
+                        payload: action.payload,
+                        key: action.key
                     });
 
-                case 22:
-                    _context.next = 33;
+                case 25:
+                    if (!(typeof action.postSaveToStoreCallback === 'function')) {
+                        _context.next = 28;
+                        break;
+                    }
+
+                    _context.next = 28;
+                    return (0, _effects.call)([action, 'postSaveToStoreCallback'], response);
+
+                case 28:
+                    _context.next = 40;
                     break;
 
-                case 24:
-                    _context.prev = 24;
+                case 30:
+                    _context.prev = 30;
                     _context.t0 = _context['catch'](11);
                     errorModel = {
                         type: actionsTypes.failedAction,
@@ -135,30 +177,35 @@ function callApi(action, apiMethods, options) {
                     }
 
                     if (!(typeof failedCallback === 'function')) {
-                        _context.next = 31;
+                        _context.next = 37;
                         break;
                     }
 
-                    _context.next = 31;
+                    _context.next = 37;
                     return (0, _effects.call)(failedCallback, errorModel);
 
-                case 31:
-                    _context.next = 33;
+                case 37:
+                    if (!(!preventFailedAction && action.preventFailure)) {
+                        _context.next = 40;
+                        break;
+                    }
+
+                    _context.next = 40;
                     return (0, _effects.put)(errorModel);
 
-                case 33:
-                    _context.next = 36;
+                case 40:
+                    _context.next = 43;
                     break;
 
-                case 35:
+                case 42:
                     throw new Error('Api method: [' + action.type + ']() isn\'t defined. Please, create it! Or use another name of action!');
 
-                case 36:
+                case 43:
                 case 'end':
                     return _context.stop();
             }
         }
-    }, _marked, this, [[11, 24]]);
+    }, _marked, this, [[11, 30]]);
 }
 
 /**
@@ -179,7 +226,7 @@ function callApi(action, apiMethods, options) {
 
  * @param  {function}    authTokenSelector function for get auth token  from redux-store
  *
-	 Example: export const getUserTocken = state => state.auth.user.token
+	 Example: export const getUserToken = state => state.auth.user.token
   * @return {Generator}
  */
 

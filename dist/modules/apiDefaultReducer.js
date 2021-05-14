@@ -38,11 +38,19 @@ function apiReducers() {
     if (typeof action.response !== 'undefined' && typeof action.response.data !== 'undefined' || isRequest) {
         switch (true) {
             case isRequest:
-                return setNewState(state, '' + action.type, Object.assign({}, action, { loading: true }));
+                return setNewState(state, '' + action.type + (action.key ? action.key : ''), Object.assign({}, action, { loading: true }));
             case /^.*_SUCCESS$/.test(action.type):
-                return setNewState(state, '' + action.type, Object.assign({}, { responseData: action.response.data }, { loading: false, loаded: true, timestamp: Date.now() }));
+                {
+                    return setNewState(state, '' + action.type + (action.key ? action.key : ''), Object.assign({}, { responseData: action.response.data }, { loading: false, loаded: true, timestamp: Date.now() }));
+                }
             case /^.*_FAILED$/.test(action.type):
-                return setNewState(state, '' + action.type, Object.assign({}, { responseData: action.response.data }, { loading: false, loаded: false, timestamp: Date.now() }));
+                {
+                    return setNewState(state, '' + action.type + (action.key ? action.key : ''), Object.assign({}, { responseData: action.response.data }, {
+                        loading: false,
+                        loаded: false,
+                        timestamp: Date.now()
+                    }));
+                }
             default:
                 return state;
         }
