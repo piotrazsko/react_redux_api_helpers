@@ -23,9 +23,34 @@ export function* callApi(action, apiMethods, options) {
         additiveCallback: null,
         successCallback: null,
         failedCallback: null,
+        stopRequest: () => {
+            // callback  used before request -  we can stop it
+            return false;
+        },
+        preventSuccessAction: false,
+        preventFailedAction: false,
     };
     options = { ...defaultOptions, ...options };
-    const { additiveCallback, apiService, successCallback, failedCallback } = options;
+    /**
+     * [additiveCallback used for prepare  request]
+     * [stopRequest used for  stop responce if nesessary ]
+     * [onSuccess used for  listening of result  - get from  action ]
+     * [beforeRequestCallback used before  request- get from  action ]
+     * [responseDataPrepare  used for prepare responce before save to store- get from  action ]
+     * [preventSuccess  used for  flag for prevent save to store- get from  action ]
+     * [preventSuccessAction  used for  flag for prevent save to store ]
+     * [postSaveToStoreCallback  used after save to store- get from  action ]
+     * @type {[type]}
+     */
+    const {
+        additiveCallback,
+        apiService,
+        successCallback,
+        failedCallback,
+        stopRequest,
+        preventSuccessAction,
+        preventFailedAction,
+    } = options;
 
     const apiRequest = apiMethods[action.type];
     if (typeof apiRequest === 'function') {
@@ -35,23 +60,34 @@ export function* callApi(action, apiMethods, options) {
         }
         let actionsTypes = responseActionsTypes(action.type);
         try {
-            let response = yield call(apiService, {
-                data,
-            });
-            if (typeof action.onSuccess === 'function') {
-                action.onSuccess(response);
+            if (!stopRequest(data)) {
+                if (typeof action.beforeRequestCallback === 'function') {
+                    action.beforeRequestCallback(data);
+                }
+                let response = yield call(apiService, {
+                    data,
+                });
+                if (typeof action.onSuccess === 'function') {
+                    action.onSuccess(response);
+                }
+                if (typeof successCallback === 'function') {
+                    yield call(successCallback, response);
+                }
+                if (typeof action.responseDataPrepare === 'function') {
+                    response = action.responseDataPrepare(response);
+                }
+                if (!preventSuccessAction && !action.preventSuccess) {
+                    yield put({
+                        response,
+                        type: actionsTypes.successAction,
+                        payload: action.payload,
+                        key: action.key,
+                    });
+                }
+                if (typeof action.postSaveToStoreCallback === 'function') {
+                    yield call([action, 'postSaveToStoreCallback'], response);
+                }
             }
-            if (typeof successCallback === 'function') {
-                yield call(successCallback, response);
-            }
-            if (typeof action.responseDataPrepare === 'function') {
-                response = action.responseDataPrepare(response);
-            }
-            yield put({
-                response,
-                type: actionsTypes.successAction,
-                payload: action.payload,
-            });
         } catch (e) {
             const errorModel = {
                 type: actionsTypes.failedAction,
@@ -66,11 +102,13 @@ export function* callApi(action, apiMethods, options) {
             if (typeof failedCallback === 'function') {
                 yield call(failedCallback, errorModel);
             }
-            yield put(errorModel);
+            if (!preventFailedAction && action.preventFailure) {
+                yield put(errorModel);
+            }
         }
     } else {
         throw new Error(
-            `Api method: [${action.type}]() isn't defined. Please, create it! Or use another name of action!`
+            `Api method: [${action.type}]() isn't defined. Please, create it! Or use another name of action!`,
         );
     }
 }
@@ -93,13 +131,13 @@ export function* callApi(action, apiMethods, options) {
 
  * @param  {function}    authTokenSelector function for get auth token  from redux-store
  *
-	 Example: export const getUserTocken = state => state.auth.user.token
+	 Example: export const getUserToken = state => state.auth.user.token
   * @return {Generator}
  */
 
 export default function* apiWatchRequest(authTokenSelector) {
     yield takeEvery(
-        action => /^.*_REQUEST$/.test(action.type),
-        actions => callApi(actions, apiRoutes.routes, authTokenSelector)
+        (action) => /^.*_REQUEST$/.test(action.type),
+        (actions) => callApi(actions, apiRoutes.routes, authTokenSelector),
     );
 }

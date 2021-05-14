@@ -16,6 +16,7 @@ export function apiSelector(actionName, options) {
         resultPrepareCalback: function(res) {
             return res;
         },
+        key: undefined,
         initialData: [],
     };
     options = Object.assign({}, defaultOptions, options);
@@ -26,8 +27,12 @@ export function apiSelector(actionName, options) {
             var result = {
                 status: false,
             };
-            var failedName = partActionName + '_FAILED';
-            var successName = partActionName + '_SUCCESS';
+            var failedName = `${partActionName}_FAILED${
+                options.key ? options.key : ''
+            }`;
+            var successName = `${partActionName}_SUCCESS${
+                options.key ? options.key : ''
+            }`;
             var timeStamp = 0;
 
             if (failedName in state.api) {
@@ -35,7 +40,10 @@ export function apiSelector(actionName, options) {
                 result = Object.assign(result, state.api[failedName]);
                 result.status = 'failed';
             }
-            if (successName in state.api && timeStamp < state.api[successName].timestamp) {
+            if (
+                successName in state.api &&
+                timeStamp < state.api[successName].timestamp
+            ) {
                 result = Object.assign(result, state.api[successName]);
                 result.status = 'success';
             }
