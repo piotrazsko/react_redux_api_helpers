@@ -1,16 +1,16 @@
 import { createAction } from 'redux-actions';
 
-export function actionCreator(actionType, reducersOptions) {
+export const actionCreator = function (actionType, reducersOptions) {
     const defaultOptions = {
-        responseDataPrepare: undefined,
+        responseDataPrepare: actionCreator.responseDataPrepareDefault,
         preventSuccess: false,
         preventFailure: false,
         postSaveToStoreCallback: false,
     };
     reducersOptions = Object.assign({}, defaultOptions, reducersOptions);
-    let actionCreator = createAction(actionType);
+    let action = createAction(actionType);
     return (payload, options) => {
-        const res = actionCreator(payload);
+        const res = action(payload);
         if (typeof res !== 'undefined' && typeof options !== 'undefined') {
             res.onFailure = options.onFailure;
             res.onSuccess = options.onSuccess;
@@ -22,7 +22,7 @@ export function actionCreator(actionType, reducersOptions) {
         res.responseDataPrepare = reducersOptions.responseDataPrepare;
         return res;
     };
-}
+};
 
 // const newType = action.type.replace('_REQUEST', '_SUCCESS');
 // export  const actionSuccess createAction

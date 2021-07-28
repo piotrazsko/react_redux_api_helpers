@@ -16,7 +16,6 @@ import { call, put, takeEvery } from 'redux-saga/effects';
 import apiServiceDefault from '../axios/axios';
 import { responseActionsTypes } from '../helpers';
 const apiRoutes = new ApiRoutes();
-
 export function* callApi(action, apiMethods, options) {
     const defaultOptions = {
         apiService: apiServiceDefault,
@@ -137,7 +136,12 @@ export function* callApi(action, apiMethods, options) {
 
 export default function* apiWatchRequest(authTokenSelector) {
     yield takeEvery(
-        (action) => /^.*_REQUEST$/.test(action.type),
+        (action) => {
+            return (
+                /^.*_REQUEST$/.test(action.type) &&
+                apiRoutes.routes[action.type]
+            );
+        },
         (actions) => callApi(actions, apiRoutes.routes, authTokenSelector),
     );
 }
