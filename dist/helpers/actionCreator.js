@@ -3,22 +3,22 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.actionCreator = actionCreator;
+exports.actionCreator = undefined;
 exports.responseActionsTypes = responseActionsTypes;
 
 var _reduxActions = require('redux-actions');
 
-function actionCreator(actionType, reducersOptions) {
+var actionCreator = exports.actionCreator = function actionCreator(actionType, reducersOptions) {
     var defaultOptions = {
-        responseDataPrepare: undefined,
+        responseDataPrepare: actionCreator.responseDataPrepareDefault,
         preventSuccess: false,
         preventFailure: false,
         postSaveToStoreCallback: false
     };
     reducersOptions = Object.assign({}, defaultOptions, reducersOptions);
-    var actionCreator = (0, _reduxActions.createAction)(actionType);
+    var action = (0, _reduxActions.createAction)(actionType);
     return function (payload, options) {
-        var res = actionCreator(payload);
+        var res = action(payload);
         if (typeof res !== 'undefined' && typeof options !== 'undefined') {
             res.onFailure = options.onFailure;
             res.onSuccess = options.onSuccess;
@@ -30,7 +30,7 @@ function actionCreator(actionType, reducersOptions) {
         res.responseDataPrepare = reducersOptions.responseDataPrepare;
         return res;
     };
-}
+};
 
 // const newType = action.type.replace('_REQUEST', '_SUCCESS');
 // export  const actionSuccess createAction

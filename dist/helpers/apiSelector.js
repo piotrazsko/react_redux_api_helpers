@@ -3,7 +3,14 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.apiSelector = apiSelector;
+exports.apiSelector = undefined;
+
+var _memoizeState = require('memoize-state');
+
+var _memoizeState2 = _interopRequireDefault(_memoizeState);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 /**
  * [apiSelector description]
  * @param  {string} actionName - rgument for get data of from state
@@ -11,19 +18,17 @@ exports.apiSelector = apiSelector;
  * 	  @param [any] filter - use for get only sucess responce - 'success', if false - 'all'
  * 		@param [boolean] onlyResultObject - use for get only result data
  * 		@param [any] initialData - set default responce( if date not founded)
- * 	 	@param [function]  resultPrepareCalback  - prepare data before return
+ * 	 	@param [function]  resultPrepareCallback  - prepare data before return
  * @return {result}
  */
 
-function apiSelector(actionName, options) {
+var apiSelector = exports.apiSelector = (0, _memoizeState2.default)(function (actionName, options) {
     var defaultOptions = {
         onlyResultObject: true,
         filter: 'success',
-        resultPrepareCalback: function resultPrepareCalback(res) {
-            return res;
-        },
+        resultPrepareCallback: undefined,
         key: undefined,
-        initialData: []
+        initialData: { loaded: false }
     };
     options = Object.assign({}, defaultOptions, options);
     if (/^.*_REQUEST$/.test(actionName)) {
@@ -57,16 +62,23 @@ function apiSelector(actionName, options) {
             }
             switch (true) {
                 case options.filter === result.status:
-                    result = tempRes;
-                    break;
+                    {
+                        result = tempRes;
+                        result.loaded = true;
+                        break;
+                    }
                 case options.filter === false:
-                    result = tempRes;
-                    break;
+                    {
+                        result = tempRes;
+                        result.loaded = true;
+                        break;
+                    }
                 default:
                     result = options.initialData;
             }
-            if (typeof options.resultPrepareCalback === 'function') {
-                return options.resultPrepareCalback(result);
+            if (typeof options.resultPrepareCallback === 'function') {
+                result = options.resultPrepareCallback(result);
+                return result;
             } else {
                 return result;
             }
@@ -74,7 +86,7 @@ function apiSelector(actionName, options) {
     } else {
         throw new Error('Action Name incorrect! Check:' + actionName);
     }
-}
+});
 ;
 
 var _temp = function () {

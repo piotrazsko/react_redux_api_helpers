@@ -44,7 +44,6 @@ var _marked = /*#__PURE__*/_regenerator2.default.mark(callApi),
                                                                           */
 
 var apiRoutes = new _apiRoutes2.default();
-
 function callApi(action, apiMethods, options) {
     var defaultOptions, _options, additiveCallback, apiService, successCallback, failedCallback, stopRequest, preventSuccessAction, preventFailedAction, apiRequest, data, actionsTypes, response, errorModel;
 
@@ -237,7 +236,7 @@ function apiWatchRequest(authTokenSelector) {
                 case 0:
                     _context2.next = 2;
                     return (0, _effects.takeEvery)(function (action) {
-                        return (/^.*_REQUEST$/.test(action.type)
+                        return (/^.*_REQUEST$/.test(action.type) && apiRoutes.routes[action.type]
                         );
                     }, function (actions) {
                         return callApi(actions, apiRoutes.routes, authTokenSelector);
