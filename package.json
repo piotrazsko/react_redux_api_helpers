@@ -22,6 +22,7 @@
 		"connected-react-router": "^5.0.1",
 		"jwt-decode": "^2.2.0",
 		"lodash": "^4.17.21",
+		"memoize-state": "^2.0.15",
 		"react-cookie": "^2.1.1",
 		"redux-actions": "^2.2.1",
 		"redux-pack": "^0.1.5",
