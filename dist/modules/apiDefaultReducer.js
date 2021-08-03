@@ -53,7 +53,7 @@ function apiReducers() {
 					}));
 				}
 			case isClear:
-				return setNewState(state, '' + action.type + (action.key ? action.key : ''), initialState);
+				return setNewState(state, '' + action.type.replace('CLEAR', 'SUCCESS') + (action.key ? action.key : ''), initialState);
 			default:
 				return state;
 		}
