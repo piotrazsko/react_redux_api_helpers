@@ -28,7 +28,9 @@ var apiSelector = exports.apiSelector = (0, _memoizeState2.default)(function (ac
         filter: 'success',
         resultPrepareCallback: undefined,
         key: undefined,
-        initialData: { loaded: false }
+        initialData: function () {
+            var arr = [];arr.loaded = false;return arr;
+        }()
     };
     options = Object.assign({}, defaultOptions, options);
     if (/^.*_REQUEST$/.test(actionName)) {

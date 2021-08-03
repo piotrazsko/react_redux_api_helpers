@@ -17,7 +17,7 @@ export const apiSelector = memoize(function (actionName, options) {
         filter: 'success',
         resultPrepareCallback: undefined,
         key: undefined,
-        initialData: { loaded: false },
+        initialData: (()=>{const  arr = []; arr.loaded = false; return arr;})() ,
     };
     options = Object.assign({}, defaultOptions, options);
     if (/^.*_REQUEST$/.test(actionName)) {
