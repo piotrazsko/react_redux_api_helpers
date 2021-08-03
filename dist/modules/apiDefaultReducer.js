@@ -36,6 +36,7 @@ function apiReducers() {
 
 	var isRequest = /^.*_REQUEST$/.test(action.type);
 	var isClear = /^.*_CLEAR$/.test(action.type);
+	var forceClear = 'FORCE_CLEAR_ALL_API' === action.type;
 	if (typeof action.response !== 'undefined' && typeof action.response.data !== 'undefined' || isRequest || isClear) {
 		switch (true) {
 			case isRequest:
@@ -54,6 +55,8 @@ function apiReducers() {
 				}
 			case isClear:
 				return setNewState(state, '' + action.type.replace('CLEAR', 'SUCCESS') + (action.key ? action.key : ''), initialState);
+			case forceClear:
+				return initialState;
 			default:
 				return state;
 		}

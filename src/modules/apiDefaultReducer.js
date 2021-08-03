@@ -17,6 +17,7 @@ const setNewState = function (state = initialState, path, object) {
 function apiReducers(state = initialState, action) {
 	const isRequest = /^.*_REQUEST$/.test(action.type)
 	const isClear = /^.*_CLEAR$/.test(action.type)
+	const forceClear = 'FORCE_CLEAR_ALL_API' === action.type
 	if (
 		(typeof action.response !== 'undefined' && typeof action.response.data !== 'undefined') ||
 		isRequest ||
@@ -56,7 +57,13 @@ function apiReducers(state = initialState, action) {
 				)
 			}
 			case isClear:
-				return setNewState(state, `${action.type.replace('CLEAR','SUCCESS')}${action.key ? action.key : ''}`, initialState)
+				return setNewState(
+					state,
+					`${action.type.replace('CLEAR', 'SUCCESS')}${action.key ? action.key : ''}`,
+					initialState
+				)
+			case forceClear:
+				return initialState
 			default:
 				return state
 		}
