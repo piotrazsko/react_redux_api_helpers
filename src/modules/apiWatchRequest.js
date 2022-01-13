@@ -102,7 +102,7 @@ export function* callApi(action, apiMethods, options) {
 			if (typeof failedCallback === 'function') {
 				yield call(failedCallback, errorModel)
 			}
-			if (!preventFailedAction && action.preventFailure) {
+			if (!preventFailedAction && !action.preventFailure) {
 				yield put(errorModel)
 			}
 		}

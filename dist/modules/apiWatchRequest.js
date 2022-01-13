@@ -186,7 +186,7 @@ function callApi(action, apiMethods, options) {
 					return (0, _effects.call)(failedCallback, errorModel);
 
 				case 38:
-					if (!(!preventFailedAction && action.preventFailure)) {
+					if (!(!preventFailedAction && !action.preventFailure)) {
 						_context.next = 41;
 						break;
 					}
