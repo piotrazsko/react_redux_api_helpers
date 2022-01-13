@@ -75,7 +75,7 @@ export function* callApi(action, apiMethods, options) {
 				if (typeof action.responseDataPrepare === 'function') {
 					response = action.responseDataPrepare(response)
 				}
-				if (!preventSuccessAction && !action.preventSuccess) {
+				if (!(preventSuccessAction || action.preventSuccess)) {
 					yield put({
 						response,
 						type: actionsTypes.successAction,
@@ -102,7 +102,7 @@ export function* callApi(action, apiMethods, options) {
 			if (typeof failedCallback === 'function') {
 				yield call(failedCallback, errorModel)
 			}
-			if (!preventFailedAction && !action.preventFailure) {
+			if (!(preventFailedAction || action.preventFailure)) {
 				yield put(errorModel)
 			}
 		}
