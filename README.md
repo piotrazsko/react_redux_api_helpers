@@ -125,7 +125,7 @@ I recommended use principe Redux-ducks for organization of code , example below.
 
     const apiRoutes = new ApiRoutes();
 
-    export const GET_LANGUAGES_LIST_REQUEST = `${modules}/
+    export const GET_LANGUAGES_LIST_REQUEST = `${modules}/GET_LANGUAGES_LIST_REQUEST`
 
     export const POST_IMPORT_JSON_REQUEST = `${modules}/POST_IMPORT_JSON_REQUEST`;
 
