@@ -44,7 +44,7 @@ init in root saga:
                 return data;
             },
             successCallback: function*(data) {
-                // yield put(hideLoader());
+                yield put(hideLoader());
                 if (
                     data.config.method === 'put' ||
                     data.config.method === 'post' ||
@@ -63,8 +63,7 @@ init in root saga:
             },
             failedCallback: function*(data) {
                 const dataStatus = data.status;
-                // redirect to login
-                // yield put(hideLoader());
+                yield put(hideLoader());
                 switch (true) {
                     case dataStatus === 401:
                         yield call(history.push, '/login');
