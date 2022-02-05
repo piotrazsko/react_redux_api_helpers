@@ -1,6 +1,7 @@
 ## react_redux_api_helpers
 
 react_redux_api_helpers is library for eiser using redux store and `redux-sagas` with request to server.
+It based on redux-saga and axios packages.
 
 ## Getting started
 
@@ -156,3 +157,25 @@ I recommended use principe Redux-ducks for organization of code , example below.
     export const getTranslatedListSelector = apiSelector(GET_LANGUAGES_LIST_REQUEST);
 
 ## API
+
+### init(url)
+
+`url` - base url for the axios.
+
+### ApiRoutes.add(actionType, fn)
+
+`actionType` - string must end with `_REQUEST`. For example `GET_USER_REQUEST`.
+`fn` - function for prepare request. For example - `url: /import-json,
+
+     (data) => {
+        return {
+            url: `/import-json`,
+            method: 'post',
+            data,
+            headers: { 'Content-Type': 'multipart/form-data' },
+            showLoaderFlag:false
+        }
+
+More information: https://github.com/axios/axios#request-config
+
+### apiSelector(actionType,options)

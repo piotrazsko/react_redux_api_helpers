@@ -1,9 +1,11 @@
 {
 	"name": "react_redux_api",
 	"description": "Collection of actions, reducers and helpers for work with API",
-	"version": "0.0.2",
+	"version": "0.0.1",
 	"main": "dist/index.js",
 	"private": false,
+	"license": "MIT",
+	"author": "Siarhei Petrashka",
 	"scripts": {
 		"start": "node index.ssl.js",
 		"clean": "rimraf dist",
@@ -55,6 +57,7 @@
 		"happypack": "^4.0.0",
 		"history": "^4.7.2",
 		"jest": "^23.6.0",
+		"jsdoc-to-markdown": "^7.1.1",
 		"less": "^2.7.3",
 		"less-loader": "^4.0.5",
 		"postcss-loader": "^2.0.8",
@@ -78,12 +81,5 @@
 		"webpack-bundle-analyzer": "^2.9.0",
 		"webpack-dev-middleware": "^1.12.0",
 		"webpack-hot-middleware": "^2.20.0"
-	},
-	"proxy": {
-		"/api": {
-			"target": "https://randomuser.me",
-			"secure": true,
-			"changeOrigin": true
-		}
 	}
 }
