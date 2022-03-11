@@ -15,7 +15,9 @@ import ApiRoutes from './apiRoutes'
 import { call, put, takeEvery } from 'redux-saga/effects'
 import apiServiceDefault from '../axios/axios'
 import { responseActionsTypes } from '../helpers'
+
 const apiRoutes = new ApiRoutes()
+
 export function* callApi(action, apiMethods, options) {
 	const defaultOptions = {
 		apiService: apiServiceDefault,
@@ -129,17 +131,17 @@ export function* callApi(action, apiMethods, options) {
 
  export { authRequests }
 
- * @param  {function}    authTokenSelector function for get auth token  from redux-store
+ * @param  {object}    options object for  set new options
  *
 	 Example: export const getUserToken = state => state.auth.user.token
   * @return {Generator}
  */
 
-export default function* apiWatchRequest(authTokenSelector) {
+export default function* apiWatchRequest(options = {}) {
 	yield takeEvery(
 		(action) => {
 			return /^.*_REQUEST$/.test(action.type) && apiRoutes.routes[action.type]
 		},
-		(actions) => callApi(actions, apiRoutes.routes, authTokenSelector)
+		(actions) => callApi(actions, apiRoutes.routes, options)
 	)
 }

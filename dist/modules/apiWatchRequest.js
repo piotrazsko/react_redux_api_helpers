@@ -44,6 +44,7 @@ var _marked = /*#__PURE__*/_regenerator2.default.mark(callApi),
                                                                           */
 
 var apiRoutes = new _apiRoutes2.default();
+
 function callApi(action, apiMethods, options) {
 	var defaultOptions, _options, additiveCallback, apiService, successCallback, failedCallback, stopRequest, preventSuccessAction, preventFailedAction, apiRequest, data, actionsTypes, response, errorModel;
 
@@ -225,13 +226,14 @@ function callApi(action, apiMethods, options) {
 
  export { authRequests }
 
- * @param  {function}    authTokenSelector function for get auth token  from redux-store
+ * @param  {object}    options object for  set new options
  *
 	 Example: export const getUserToken = state => state.auth.user.token
   * @return {Generator}
  */
 
-function apiWatchRequest(authTokenSelector) {
+function apiWatchRequest() {
+	var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 	return _regenerator2.default.wrap(function apiWatchRequest$(_context2) {
 		while (1) {
 			switch (_context2.prev = _context2.next) {
@@ -241,7 +243,7 @@ function apiWatchRequest(authTokenSelector) {
 						return (/^.*_REQUEST$/.test(action.type) && apiRoutes.routes[action.type]
 						);
 					}, function (actions) {
-						return callApi(actions, apiRoutes.routes, authTokenSelector);
+						return callApi(actions, apiRoutes.routes, options);
 					});
 
 				case 2:
