@@ -65,7 +65,7 @@ export function* callApi(action, apiMethods, options) {
 				if (typeof action.beforeRequestCallback === 'function') {
 					action.beforeRequestCallback(data)
 				}
-				let response = yield call(apiService, {
+				let response = yield call([apiService], {
 					data,
 				})
 				if (typeof action.onSuccess === 'function') {
