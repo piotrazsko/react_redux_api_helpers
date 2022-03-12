@@ -111,7 +111,7 @@ function callApi(action, apiMethods, options) {
 						action.beforeRequestCallback(data);
 					}
 					_context.next = 16;
-					return (0, _effects.call)([apiService], {
+					return (0, _effects.call)(apiService, {
 						data: data
 					});
 
