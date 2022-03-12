@@ -46,7 +46,7 @@ var _marked = /*#__PURE__*/_regenerator2.default.mark(callApi),
 var apiRoutes = new _apiRoutes2.default();
 
 function callApi(action, apiMethods, options) {
-	var defaultOptions, _options, additiveCallback, apiService, successCallback, failedCallback, stopRequest, preventSuccessAction, preventFailedAction, apiRequest, data, actionsTypes, response, errorModel;
+	var defaultOptions, _options, additiveCallback, apiService, successCallback, failedCallback, stopRequest, preventSuccessAction, preventFailedAction, call, put, apiRequest, data, actionsTypes, response, errorModel;
 
 	return _regenerator2.default.wrap(function callApi$(_context) {
 		while (1) {
@@ -62,7 +62,9 @@ function callApi(action, apiMethods, options) {
 							return false;
 						},
 						preventSuccessAction: false,
-						preventFailedAction: false
+						preventFailedAction: false,
+						call: _effects.call,
+						put: _effects.put
 					};
 
 					options = (0, _extends3.default)({}, defaultOptions, options);
@@ -77,7 +79,7 @@ function callApi(action, apiMethods, options) {
       * [postSaveToStoreCallback  used after save to store- get from  action ]
       * @type {[type]}
       */
-					_options = options, additiveCallback = _options.additiveCallback, apiService = _options.apiService, successCallback = _options.successCallback, failedCallback = _options.failedCallback, stopRequest = _options.stopRequest, preventSuccessAction = _options.preventSuccessAction, preventFailedAction = _options.preventFailedAction;
+					_options = options, additiveCallback = _options.additiveCallback, apiService = _options.apiService, successCallback = _options.successCallback, failedCallback = _options.failedCallback, stopRequest = _options.stopRequest, preventSuccessAction = _options.preventSuccessAction, preventFailedAction = _options.preventFailedAction, call = _options.call, put = _options.put;
 					apiRequest = apiMethods[action.type];
 
 					if (!(typeof apiRequest === 'function')) {
@@ -111,7 +113,7 @@ function callApi(action, apiMethods, options) {
 						action.beforeRequestCallback(data);
 					}
 					_context.next = 16;
-					return (0, _effects.call)(apiService, {
+					return call(apiService, {
 						data: data
 					});
 
@@ -128,7 +130,7 @@ function callApi(action, apiMethods, options) {
 					}
 
 					_context.next = 21;
-					return (0, _effects.call)(successCallback, response);
+					return call(successCallback, response);
 
 				case 21:
 					if (typeof action.responseDataPrepare === 'function') {
@@ -141,7 +143,7 @@ function callApi(action, apiMethods, options) {
 					}
 
 					_context.next = 25;
-					return (0, _effects.put)({
+					return put({
 						response: response,
 						type: actionsTypes.successAction,
 						payload: action.payload,
@@ -155,7 +157,7 @@ function callApi(action, apiMethods, options) {
 					}
 
 					_context.next = 28;
-					return (0, _effects.call)([action, 'postSaveToStoreCallback'], response);
+					return call([action, 'postSaveToStoreCallback'], response);
 
 				case 28:
 					_context.next = 41;
@@ -184,7 +186,7 @@ function callApi(action, apiMethods, options) {
 					}
 
 					_context.next = 38;
-					return (0, _effects.call)(failedCallback, errorModel);
+					return call(failedCallback, errorModel);
 
 				case 38:
 					if (preventFailedAction || action.preventFailure) {
@@ -193,7 +195,7 @@ function callApi(action, apiMethods, options) {
 					}
 
 					_context.next = 41;
-					return (0, _effects.put)(errorModel);
+					return put(errorModel);
 
 				case 41:
 					_context.next = 44;
@@ -234,12 +236,13 @@ function callApi(action, apiMethods, options) {
 
 function apiWatchRequest() {
 	var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+	var takeEveryEffect = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _effects.takeEvery;
 	return _regenerator2.default.wrap(function apiWatchRequest$(_context2) {
 		while (1) {
 			switch (_context2.prev = _context2.next) {
 				case 0:
 					_context2.next = 2;
-					return (0, _effects.takeEvery)(function (action) {
+					return takeEveryEffect(function (action) {
 						return (/^.*_REQUEST$/.test(action.type) && apiRoutes.routes[action.type]
 						);
 					}, function (actions) {

@@ -12,7 +12,7 @@
  */
 
 import ApiRoutes from './apiRoutes'
-import { call, put, takeEvery } from 'redux-saga/effects'
+import { call as callSaga, put as putSaga, takeEvery } from 'redux-saga/effects'
 import apiServiceDefault from '../axios/axios'
 import { responseActionsTypes } from '../helpers'
 
@@ -30,6 +30,8 @@ export function* callApi(action, apiMethods, options) {
 		},
 		preventSuccessAction: false,
 		preventFailedAction: false,
+		call: callSaga,
+		put: putSaga,
 	}
 	options = { ...defaultOptions, ...options }
 	/**
@@ -51,6 +53,8 @@ export function* callApi(action, apiMethods, options) {
 		stopRequest,
 		preventSuccessAction,
 		preventFailedAction,
+		call,
+		put,
 	} = options
 
 	const apiRequest = apiMethods[action.type]
@@ -137,8 +141,8 @@ export function* callApi(action, apiMethods, options) {
   * @return {Generator}
  */
 
-export default function* apiWatchRequest(options = {}) {
-	yield takeEvery(
+export default function* apiWatchRequest(options = {}, takeEveryEffect = takeEvery) {
+	yield takeEveryEffect(
 		(action) => {
 			return /^.*_REQUEST$/.test(action.type) && apiRoutes.routes[action.type]
 		},

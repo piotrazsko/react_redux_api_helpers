@@ -1,7 +1,7 @@
 {
 	"name": "react_redux_api",
 	"description": "Collection of actions, reducers and helpers for work with API",
-	"version": "0.0.6",
+	"version": "0.0.7",
 	"main": "dist/index.js",
 	"private": false,
 	"license": "MIT",
